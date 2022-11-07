@@ -1,10 +1,21 @@
-# Two-step
+# jspsych-demos
 
-Author(s): Sam Zorowitz, Gili Karni, Branson Byers
+This repository contains jsPsych experiments and plugins developed by members (and friends) of the Niv lab. You can view [interactive demos](https://nivlab.github.io/jspsych-demos/) of each experiment/plugin or you can [inspect the code](https://github.com/nivlab/jspsych-demos/tree/main/tasks) directly.
 
-A space-themed version of the two-step task.
+This project is hosted on GitHub Pages using the [Minimal theme](https://github.com/pages-themes/minimal) by [orderedlist](https://github.com/orderedlist).
 
-## References
-- Daw, N. D., Gershman, S. J., Seymour, B., Dayan, P., & Dolan, R. J. (2011). Model-based influences on humans' choices and striatal prediction errors. Neuron, 69(6), 1204-1215.
-- Decker, J. H., Otto, A. R., Daw, N. D., & Hartley, C. A. (2016). From creatures of habit to goal-directed learners: Tracking the developmental emergence of model-based reinforcement learning. Psychological science, 27(6), 848-858.
-- Nussenbaum, K., Scheuplein, M., Phaneuf, C. V., Evans, M. D., & Hartley, C. A. (2020). Moving developmental research online: Comparing in-lab and web-based studies of model-based reinforcement learning. Collabra: Psychology, 6(1).
+## Contributing
+
+### Previewing the demos page locally
+
+If you'd like to preview the demos page locally (for example, in the process of proposing a change):
+
+1. Clone down the project's repository (`git clone https://github.com/nivlab/jspsych-demos`)
+2. `cd` into the project's directory
+3. Run `bundle install` to install the necessary dependencies
+4. Run `bundle exec jekyll serve` to start the preview server
+5. Visit `localhost:4000` in your browser to preview the project
+
+## Acknowledgements
+
+This resource was made possible thanks to [jsPsych](https://www.jspsych.org/), [Github Pages](https://pages.github.com/), and with support from the National Center for Advancing Translational Sciences (NCATS), a component of the National Institute of Health (NIH), under award number UL1TR003017.
