@@ -92,7 +92,7 @@ jsPsych.plugins["two-step-trial"] = (function() {
         type: jsPsych.plugins.parameterType.BOOL,
         pretty_name: 'Animation',
         default: true,
-        desscription: 'Display animations during trial (true / false).'
+        description: 'Display animations during trial (true / false).'
       }
       
     }
@@ -143,10 +143,14 @@ jsPsych.plugins["two-step-trial"] = (function() {
       font-size: 16px;
       line-height: 1.5em;
     }
+
+    .comprehension-box.alien-comp-box {
+      height: 275px;
+    }
     .comprehension-box .jspsych-survey-multi-choice-preamble h4 {
       font-size: 18px;
       margin-block-start: 1em;
-      margin-block-end: 1.2em
+      margin-block-end: 1.2em;
     }
     .comprehension-box .jspsych-survey-multi-choice-question {
       margin-top: 0em;
@@ -175,6 +179,17 @@ jsPsych.plugins["two-step-trial"] = (function() {
       transform: translate(-50%, -50%);
       font-size: 16px;
       padding: 4px 8px;
+    }
+
+    .comprehension-box input[type='range'] {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 60%;
+    }
+
+    .comprehension-box.alien-comp-box input[type='submit'] {
+      top: 85%;
     }
     .rating-box plugin-html-slider-response.js {
       margin-top: 0em;
@@ -217,6 +232,7 @@ jsPsych.plugins["two-step-trial"] = (function() {
     var state_2_ids = [0,1];
     if ( trial.randomize_s2 ) { state_2_ids = jsPsych.randomization.shuffle(state_2_ids); }
 
+    console.log(state_2_ids)
     // Draw aliens
     state_2_ids.forEach((j, i) => {
       new_html += `<div class="alien" id="alien-${i}" state="1" side="${i}">`;
@@ -255,6 +271,8 @@ jsPsych.plugins["two-step-trial"] = (function() {
       state_2_key: null,
       state_2_choice: null,
       state_2_rt: null,
+      state_2_certainty: null,
+      state_2_reported_transition_rating: null,
       outcome: null,
     }
 
@@ -326,13 +344,16 @@ jsPsych.plugins["two-step-trial"] = (function() {
       return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
     }
 
-    var collect_ratings = function(){
+    var collect_ratings = function() {
       var plugin_id_name = "lmfplugin-html-slider-response.js";
       var plugin_id_selector = '#' + plugin_id_name;
-      var _join = function( /*args*/ ) {
+      var _join = function() {
         var arr = Array.prototype.slice.call(arguments, _join.length);
         return arr.join(separator = '-');
       }
+
+      var cValue = 50;
+      var lValue = 50;
 
       var html = '';// form element
 
@@ -348,27 +369,32 @@ jsPsych.plugins["two-step-trial"] = (function() {
       //const planet_font_color = task_info.font_colors[planet_color_name];
       
       //question 1 stage 1
-      html += '<div class="jspsych-survey-multi-choice-preamble"> How likely is it you will transition to the ' + planet_color_name + ' planet?</div>';
-      html += `<input type="range" id = "likelihood" form="${trial_form_id}">100% likely</input>`
-      
+      html += `<div class="jspsych-survey-multi-choice-preamble"> How likely is it you will transition to the <span style="color:${planet_color_name};">${planet_color_name}</span> planet?</div>`;
+      html += `<input type="range" id="likelihood" name="likelihood" form="${trial_form_id}">`;
+      html += `<label for="likelihood"> <span id="lValue">${lValue}</span>% likely</label>`
       // question 2
       html += '<div class="jspsych-survey-multi-choice-preamble">How certain are you of this choice?</div>';
-      html += `<input type="range" id = "certainty" form="${trial_form_id}">100% certain</input>`
-  
-      // // add submit button
-      // html += '<input type="submit" id="'+plugin_id_name+'-next" class="'+plugin_id_name+' jspsych-btn"' + (trial.button_label ? ' value="'+trial.button_label + '"': '') + '"></input>';
-      html += `<input type="submit" id="${plugin_id_name}-next" class="${plugin_id_name} jspsych-btn" form="${trial_form_id}"></input>`;
-      // End HTML
-      // html += '</form>';
+      html += `<input type="range" id="certainty" name="certainty" form="${trial_form_id}">`;
+      html += `<label for="certainty"><span id="cValue">${cValue}</span>% certain</label>`
+      html += `<input type="submit" id="${plugin_id_name}-next" class="${plugin_id_name} jspsych-btn" form="${trial_form_id}" disabled=true></input>`;
       html += '</div>';
       html += '</div>';
-  
-      // Display HTML
+
       display_element.querySelector('.landscape-sky').innerHTML += html;
 
+      var slidersTouched = new Set()
+      document.getElementById("certainty").addEventListener("input", (event) => {
+        slidersTouched.add("certainty"); 
+        document.getElementById(`${plugin_id_name}-next`).disabled = !(slidersTouched.size == 2)
+        document.getElementById("cValue").innerText = event.target.value;
+      })
+      document.getElementById("likelihood").addEventListener("input", (event) => {
+        slidersTouched.add("likelihood"); 
+        document.getElementById(`${plugin_id_name}-next`).disabled = !(slidersTouched.size == 2);
+        document.getElementById("lValue").innerText = event.target.value;
+      })
+  
       const startTime = performance.now();
-      document.getElementById(trial_form_id).addEventListener('invalid', (event) => { console.log('invalid'); console.log(event);});
-
       document.getElementById(trial_form_id).addEventListener('submit', function(event) {
         console.log("submit query...")
         event.preventDefault();
@@ -377,37 +403,16 @@ jsPsych.plugins["two-step-trial"] = (function() {
         var endTime = performance.now();
         var response_time = endTime - startTime;
   
-        // Gather responses
         var responses = [];
-        // var num_errors = 0;
-        /*
-        for (var i=0; i<trial.prompts.length; i++) {
-  
-          // Find matching question.///**need to make this speciffic to your task /
-          var match = display_element.querySelector('#rating-box'+i);
-          var val = match.querySelector("input[type=number]").value;
-  
-          // Store response
-          responses.push(val)
-  
-          // // Check accuracy
-          // if ( trial.rating[i] != val ) {
-          //   num_errors++;
-          // }
-  
-        }
-        */
 
         // insert data into trial data
-         
-        responses.push(document.getElementById('likelihood').value);
-        responses.push(document.getElementById('certainty').value);
-        document.querySelector('.landscape-sky').innerHTML = "";
+        response.state_1_reported_transition_rating = document.getElementById('likelihood').value;
+        response.state_1_certainty = document.getElementById('certainty').value;
+        // document.querySelector('.landscape-sky').innerHTML = "";
         setTimeout(function() { state_transition(); }, 800);
-      });
-      
-      
 
+        display_element.querySelector('.comprehension-box').remove();
+      });
     }
 
 
@@ -464,6 +469,69 @@ jsPsych.plugins["two-step-trial"] = (function() {
 
     };
 
+    var collect_alien_ratings = function() {
+      var plugin_id_name = "lmfplugin-html-slider-response.js";
+      var plugin_id_selector = '#' + plugin_id_name;
+      var _join = function() {
+        var arr = Array.prototype.slice.call(arguments, _join.length);
+        return arr.join(separator = '-');
+      }
+
+      var html = '';// form element
+
+      var trial_form_id = _join(plugin_id_name, "form");
+      display_element.innerHTML += '<form id="'+trial_form_id+'"></form>';
+      var cValue = 50;
+      var cValue = 50;
+  
+      // Show preamble text
+      html += '<div id="'+trial_form_id+'_div" class="comprehension-box alien-comp-box">'
+      html += '<div class="jspsych-survey-multi-choice-preamble"><h4>To continue, you must answer the following:</h4></div>';
+
+      //question 1 stage 1
+      html += `<div class="jspsych-survey-multi-choice-preamble"> How chill is this alien?</div>`;
+      html += `<input type="range" id = "likelihood" form="${trial_form_id}">${lValue}% likely</input>`;
+      // question 2
+      html += '<div class="jspsych-survey-multi-choice-preamble">How certain are you of this choice?</div>';
+      html += `<input type="range" id = "certainty" form="${trial_form_id}">${cValue}% certain</input>`;
+      html += `<input type="submit" id="${plugin_id_name}-next" class="${plugin_id_name} jspsych-btn" form="${trial_form_id}"></input>`;
+      html += '</div>';
+      html += '</div>';
+
+      display_element.querySelector('.landscape-sky').innerHTML += html;
+
+      var slidersTouched = new Set()
+      document.getElementById("certainty").addEventListener("change", () => {
+        slidersTouched.add("certainty"); 
+        document.getElementById(`${plugin_id_name}-next`).disabled = !(slidersTouched.size == 2)
+      })
+      document.getElementById("likelihood").addEventListener("change", () => {
+        slidersTouched.add("likelihood"); 
+        document.getElementById(`${plugin_id_name}-next`).disabled = !(slidersTouched.size == 2)
+      })
+ 
+      const startTime = performance.now();
+      document.getElementById(trial_form_id).addEventListener('submit', function(event) {
+        console.log("submit query...")
+        event.preventDefault();
+  
+        // Measure response time
+        var endTime = performance.now();
+        var response_time = endTime - startTime;
+  
+
+        // insert data into trial data
+        response.state_2_reported_transition_rating = document.getElementById('likelihood').value;
+        response.state_2_certainty = document.getElementById('certainty').value;
+        // document.querySelector('.landscape-sky').innerHTML = "";
+        setTimeout(function() { state_transition(); }, 800);
+        // Present feedback.
+        state_2_feedback(response.state_2_key, response.outcome)
+        setTimeout(function() { end_trial(); }, trial.feedback_duration);
+        display_element.querySelector('.comprehension-box').remove();
+      });
+    }
+
     // function to handle responses by the subject
     var after_second_response = function(info) {
 
@@ -476,17 +544,17 @@ jsPsych.plugins["two-step-trial"] = (function() {
       response.state_2_key = trial.valid_responses_s2.indexOf(info.key);
       response.state_2_choice = state_2_ids[response.state_2_key];
       response.outcome = trial.outcomes[response.state_2_choice];
+      console.log(response)
 
-      // Present feedback.
-      state_2_feedback(response.state_2_key, response.outcome)
-      
-      // LMF: present the rating options
-      
+      document.getElementById(`alien-${1 - response.state_2_key}`).setAttribute('state', 1)
+      collect_alien_ratings()
 
-      // Pause for animation (2s).
-      setTimeout(function() { end_trial(); }, trial.feedback_duration);
+    }
 
-    };
+
+
+
+    // };
 
     // function to present second state feedback.
     var state_2_feedback = function(side, outcome) {
@@ -500,6 +568,7 @@ jsPsych.plugins["two-step-trial"] = (function() {
 
     // function to end trial
     var end_trial = function() {
+      console.log(response)
 
       // kill any remaining setTimeout handlers
       jsPsych.pluginAPI.clearAllTimeouts();
@@ -553,8 +622,6 @@ jsPsych.plugins["two-step-trial"] = (function() {
         missed_response();
       }, trial.choice_duration);
     }
-
   };
-
   return plugin;
 })();
