@@ -489,7 +489,7 @@ jsPsych.plugins["two-step-trial"] = (function() {
       html += '<div class="jspsych-survey-multi-choice-preamble"><h4>To continue, you must answer the following:</h4></div>';
 
       //question 1 stage 1
-      html += `<div class="jspsych-survey-multi-choice-preamble"> How chill is this alien?</div>`;
+      html += `<div class="jspsych-survey-multi-choice-preamble"> How likely is it you will get gems from this alien?</div>`;
       html += `<input type="range" id = "likelihood" form="${trial_form_id}"><span id="lValue">${lValue}</span>% likely</input>`;
       // question 2
       html += '<div class="jspsych-survey-multi-choice-preamble">How certain are you of this choice?</div>';
