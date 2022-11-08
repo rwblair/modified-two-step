@@ -477,12 +477,12 @@ jsPsych.plugins["two-step-trial"] = (function() {
         return arr.join(separator = '-');
       }
 
-      var html = '';// form element
+      var html = ''; // form element
 
       var trial_form_id = _join(plugin_id_name, "form");
       display_element.innerHTML += '<form id="'+trial_form_id+'"></form>';
       var cValue = 50;
-      var cValue = 50;
+      var lValue = 50;
   
       // Show preamble text
       html += '<div id="'+trial_form_id+'_div" class="comprehension-box alien-comp-box">'
@@ -490,10 +490,10 @@ jsPsych.plugins["two-step-trial"] = (function() {
 
       //question 1 stage 1
       html += `<div class="jspsych-survey-multi-choice-preamble"> How chill is this alien?</div>`;
-      html += `<input type="range" id = "likelihood" form="${trial_form_id}">${lValue}% likely</input>`;
+      html += `<input type="range" id = "likelihood" form="${trial_form_id}"><span id="lValue">${lValue}</span>% likely</input>`;
       // question 2
       html += '<div class="jspsych-survey-multi-choice-preamble">How certain are you of this choice?</div>';
-      html += `<input type="range" id = "certainty" form="${trial_form_id}">${cValue}% certain</input>`;
+      html += `<input type="range" id = "certainty" form="${trial_form_id}"><span id="cValue">${cValue}</span>% certain</input>`;
       html += `<input type="submit" id="${plugin_id_name}-next" class="${plugin_id_name} jspsych-btn" form="${trial_form_id}"></input>`;
       html += '</div>';
       html += '</div>';
@@ -501,13 +501,15 @@ jsPsych.plugins["two-step-trial"] = (function() {
       display_element.querySelector('.landscape-sky').innerHTML += html;
 
       var slidersTouched = new Set()
-      document.getElementById("certainty").addEventListener("change", () => {
+      document.getElementById("certainty").addEventListener("input", () => {
         slidersTouched.add("certainty"); 
         document.getElementById(`${plugin_id_name}-next`).disabled = !(slidersTouched.size == 2)
+        document.getElementById("cValue").innerText = event.target.value;
       })
-      document.getElementById("likelihood").addEventListener("change", () => {
+      document.getElementById("likelihood").addEventListener("input", () => {
         slidersTouched.add("likelihood"); 
         document.getElementById(`${plugin_id_name}-next`).disabled = !(slidersTouched.size == 2)
+        document.getElementById("lValue").innerText = event.target.value;
       })
  
       const startTime = performance.now();
