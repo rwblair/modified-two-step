@@ -4,7 +4,7 @@
 *
 * Plug-in to run two-step task trial
 
-** this task is modified to ask participants for transition probabilities. Lynde Folsom 2022
+** this task is modified to ask participants for transition probabilities. Lynde Folsom, Ross Blair 2022
 **/
 
 jsPsych.plugins["two-step-trial"] = (function() {
@@ -526,11 +526,11 @@ jsPsych.plugins["two-step-trial"] = (function() {
         response.state_2_reported_transition_rating = document.getElementById('likelihood').value;
         response.state_2_certainty = document.getElementById('certainty').value;
         // document.querySelector('.landscape-sky').innerHTML = "";
-        setTimeout(function() { state_transition(); }, 800);
+        // setTimeout(function() { state_transition(); }, 800);
         // Present feedback.
         state_2_feedback(response.state_2_key, response.outcome)
         setTimeout(function() { end_trial(); }, trial.feedback_duration);
-        display_element.querySelector('.comprehension-box').remove();
+        display_element.querySelector('.alien-comp-box').remove();
       });
     }
 
