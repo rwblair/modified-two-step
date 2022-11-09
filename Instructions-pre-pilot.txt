@@ -1,0 +1,10 @@
+# Instructions for opening and running pilot 
+Hiya! This doc is explicitly for pre piloting this task. 
+
+After cloning, please navigate to 
+
+Modified-two-step/tasks/two-step/
+
+Select and open the “experiment.html”
+
+If errors are encountered, please slack me with screen cap or error message.
