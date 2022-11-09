@@ -373,7 +373,7 @@ jsPsych.plugins["two-step-trial"] = (function() {
       html += `<input type="range" id="likelihood" name="likelihood" form="${trial_form_id}">`;
       html += `<label for="likelihood"> <span id="lValue">${lValue}</span>% likely</label>`
       // question 2
-      html += '<div class="jspsych-survey-multi-choice-preamble">How certain are you of this choice?</div>';
+      html += '<div class="jspsych-survey-multi-choice-preamble">How certain are you of this estimate?</div>';
       html += `<input type="range" id="certainty" name="certainty" form="${trial_form_id}">`;
       html += `<label for="certainty"><span id="cValue">${cValue}</span>% certain</label>`
       html += `<input type="submit" id="${plugin_id_name}-next" class="${plugin_id_name} jspsych-btn" form="${trial_form_id}" disabled=true></input>`;
@@ -492,7 +492,7 @@ jsPsych.plugins["two-step-trial"] = (function() {
       html += `<div class="jspsych-survey-multi-choice-preamble"> How likely is it you will get gems from this alien?</div>`;
       html += `<input type="range" id = "likelihood" form="${trial_form_id}"><span id="lValue">${lValue}</span>% likely</input>`;
       // question 2
-      html += '<div class="jspsych-survey-multi-choice-preamble">How certain are you of this choice?</div>';
+      html += '<div class="jspsych-survey-multi-choice-preamble">How certain are you of this estimate?</div>';
       html += `<input type="range" id = "certainty" form="${trial_form_id}"><span id="cValue">${cValue}</span>% certain</input>`;
       html += `<input type="submit" id="${plugin_id_name}-next" class="${plugin_id_name} jspsych-btn" form="${trial_form_id}"></input>`;
       html += '</div>';
