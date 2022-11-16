@@ -351,6 +351,7 @@ const practice_2 = {
     outcomes: [],
     rocket_colors: practice_info.rocket_colors,
     planet_colors: practice_info.planet_colors,
+    planet_names: practice_info.planet_names,
     aliens: practice_info.aliens,
     choice_duration: choice_duration,
     feedback_duration: feedback_duration,
