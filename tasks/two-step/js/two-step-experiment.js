@@ -38,9 +38,6 @@ const mapping = jsPsych.randomization.shuffle([
     jsPsych.randomization.shuffle([2,3]),
 ]).flat();
 
-console.log("mapping")
-console.log(mapping)
-
 // Define task stimuli.
 const task_info = {
   planet_colors: mapping.slice(0,2).map(function(i) {return planet_colors[i]} ),
